@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function Headers() {
     return (
-        <div className='fixed bg-none flex w-full items-center h-[50px] align-middle justify-between px-[100px] py-[50px]'>
+        <div className='relative bg-none flex w-full items-center h-[50px] align-middle justify-between px-[100px] py-[50px]'>
             <Image className="h-[50px] w-[50px]"
                 src="/SGALOGO.svg"
                 width={50}
