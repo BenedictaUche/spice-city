@@ -104,7 +104,7 @@ const EmailVerification: NextPageWithLayout = () => {
         </form>
       </Form>
       <div className="flex items-center justify-between mt-6">
-        <p className="text-[#6b7280]">Didn`&apos;`t receive the code?{" "}
+        <p className="text-[#6b7280]">Didn&apos;t receive the code?{" "}
           <button
             type="button"
             onClick={handleResendClick}
