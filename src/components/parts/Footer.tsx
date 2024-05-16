@@ -6,10 +6,10 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <div className="h-[300px] rounded-tl-lg-2xl bg-[#F0EAE8] flex flex-col w-full items-center align-middle justify-center px-[100px] py-[50px]">
+    <div className="h-[300px] gap-6 rounded-tr-[80px] bg-[#F0EAE8] flex flex-col w-full items-center align-middle justify-center px-[100px] py-[50px]">
       <div className=" w-[90%] justify-between flex bg-none z-99 font-[400] text-[14px] text-white gap-8 items-center ">
         <Image
-          className="h-[150px] w-[150px]"
+          className="h-[100px] w-[100px]"
           src="/SGALOGO.svg"
           width={50}
           height={50}
@@ -117,9 +117,9 @@ export default function Footer() {
           />
         </div>
       </div>
-      <div>
-        <hr className="h-1 w-[300px] bg "/>
-        <p>© Spicy Guitar Academy 2024. All rights reserved.</p>
+      <div className="mt-4 flex w-[90%] gap-2 justify-center items-center">
+        <div className="h-[2px] w-[70%] bg-black bg-opacity-45"></div>
+        <p className="text-[13px]">© Spicy Guitar Academy 2024. All rights reserved.</p>
       </div>
     </div>
   );
