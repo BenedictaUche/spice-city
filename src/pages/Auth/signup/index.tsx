@@ -15,44 +15,91 @@ import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/router";
 import CustomButton from "@/components/CustomButton";
 import { Input } from "@/components/ui/input";
+import { SignUpProps } from "../../../../hooks/auth/types";
+import { useMutation } from "@tanstack/react-query";
+import { AuthSignUp } from "../../../../hooks/auth";
+import { QUERY_KEYS } from "@/lib/utils";
+
+
+
 
 const SignUp: NextPageWithLayout = () => {
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
+  // const { token } = router.query;
+  // console.log(token);
 
   const form = useForm<z.infer<typeof signUpFormSchema>>({
     resolver: zodResolver(signUpFormSchema),
     defaultValues: {
       email: "",
       password: "",
-      confirmPassword: "",
+      // confirmPassword: "",
+      firstName: "",
+      lastName: "",
+      username: "",
+    },
+  });
+
+  const { mutate, isLoading} = useMutation({
+    mutationKey: [QUERY_KEYS.signUp],
+    mutationFn: (data: SignUpProps) => AuthSignUp(data),
+    onSuccess(res) {
+      console.log("Mutation success:", res);
+       toast({
+          title: `Account Successfuly Created`,
+          className: "toast-success",
+        });
+      router.push(`/auth/confirm?email=${res.data.email}`);
+    },
+    onError(e: any) {
+      console.log("Mutation error:", e);
+      if (e.response.data.email) {
+        toast({
+          title: `Something went wrong!`,
+          description: "User with this email address already exist",
+          variant: "destructive",
+        });
+        return;
+      }
+      toast({
+        title: `Something went wrong!`,
+        description: e?.response?.data.error || e?.response?.data.password,
+        variant: "destructive",
+      });
     },
   });
 
 
-  const onSubmit = (values: z.infer<typeof signUpFormSchema>) => {
-    if (values.password !== values.confirmPassword) {
-      toast({
-        title: `Uhh, something went wrong!`,
-        description: "Password and Confirm Password do not match",
-        className: "text-[#141619] bg-[#d3d3d4] border-[#bcbebf]",
-      });
-      return;
+  const onSubmit = (values: SignUpProps) => {
 
+    console.log("Form values:", values);
+    // if (values.password !== values.confirmPassword) {
+    //   toast({
+    //     title: `Uhh, something went wrong!`,
+    //     description: "Password and Confirm Password do not match",
+    //     className: "text-[#141619] bg-[#d3d3d4] border-[#bcbebf]",
+    //   });
+    //   console.log("Password and Confirm Password do not match");
+    //   return;
+    // }
+
+    const payload = {
+      email: values.email,
+      password: values.password,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      // confirmPassword: values.confirmPassword,
+      role: "student",
+      username: values.firstName + values.lastName,
+    };
+
+    console.log("Submitting payload: ", payload);
+    mutate(payload);
     }
-    setIsLoading(true);
-    toast({
-      title: "Account created successfully!",
-      description: "Redirecting to confirmation page...",
-      className: "text-[#141619] bg-[#d3d3d4] border-[#bcbebf]",
-    })
-    setTimeout(() => {
-      setIsLoading(false);
-      router.push("/auth/confirm");
-    }, 2000);
-  };
+
 
   return (
     <AuthSection>

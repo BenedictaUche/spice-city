@@ -4,6 +4,7 @@ export const signUpFormSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   email: z.string().email(),
+  username: z.string(),
   password: z
     .string()
     .min(8, {
@@ -20,6 +21,7 @@ export const signUpFormSchema = z.object({
     .max(28, {
       message: "Password must contain at most 28 character(s)",
     }),
+    // token: z.string(),
 });
 
 export const signInFormSchema = z.object({
@@ -35,7 +37,7 @@ export const signInFormSchema = z.object({
 });
 
 export const contactFormSchema = z.object({
-  full_name: z.string(),
+  fullname: z.string(),
   email: z.string().email(),
   subject: z.string(),
   message: z.string(),

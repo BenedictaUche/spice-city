@@ -15,10 +15,14 @@ import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/router";
 import CustomButton from "@/components/CustomButton";
 import { Input } from "@/components/ui/input";
+import { LoginProps } from "../../../../hooks/auth/types";
+import { useMutation } from "@tanstack/react-query";
+import { AuthLogin } from "../../../../hooks/auth";
+import { QUERY_KEYS } from "@/lib/utils";
 
 const SignIn: NextPageWithLayout = () => {
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
@@ -30,18 +34,38 @@ const SignIn: NextPageWithLayout = () => {
     },
   });
 
+  const { mutate, isLoading } = useMutation({
+    mutationKey: [QUERY_KEYS.login],
+    mutationFn: (data: LoginProps) => AuthLogin(data),
+    onSuccess(res) {
+      console.log("Mutation success:", res);
+      toast({
+        title: `Logged in successfully`,
+        className: "toast-success",
+      });
+      router.push("/dashboard/student/account");
+    },
+    onError(e: any) {
+      console.log("Mutation error:", e);
+      if (e.response.data.email) {
+        toast({
+          title: e.response.data.email,
+          className: "toast-error",
+        });
+        return;
+      }
+      toast({
+        title: `Something went wrong!`,
+        description: e?.response?.data.error || e?.response?.data.password,
+        variant: "destructive",
+      });
+    },
+  });
+
 
   const onSubmit = (values: z.infer<typeof signInFormSchema>) => {
-    setIsLoading(true);
-    toast({
-      title: "Logged in successfully!",
-      description: "Redirecting to dashboard",
-      className: "text-[#141619] bg-[#d3d3d4] border-[#bcbebf]",
-    })
-    setTimeout(() => {
-      setIsLoading(false);
-      router.push("/dashboard/student/account");
-    }, 2000);
+    console.log("Values:", values);
+    mutate(values);
   };
 
   return (
