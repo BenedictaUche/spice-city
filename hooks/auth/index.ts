@@ -30,20 +30,20 @@ export const AuthLogin = async ({ ...rest }: LoginProps) => {
   return await axios(config);
 };
 
-// export const AuthConfirmOtp = async (payload: {
-//   email: string;
-//   token: string;
-// }) => {
-//   const config = {
-//     method: "post",
-//     url: `${process.env.NEXT_PUBLIC_API_URL}/auth/users/activation/`,
-//     data: payload,
-//   };
+export const AuthConfirmOtp = async (payload: {
+  email: string;
+  otp_code: string;
+}) => {
+  const config = {
+    method: "post",
+    url: `${process.env.NEXT_PUBLIC_API_URL}/otp/send-otp`,
+    data: payload,
+  };
 
-//   const { data } = await axios(config);
+  const { data } = await axios(config);
 
-//   return data;
-// };
+  return data;
+};
 
 // export const AuthResendOtp = async (email: string) => {
 //   try {

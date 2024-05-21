@@ -1,36 +1,32 @@
 import AuthLayout from "@/components/layout/auth/AuthLayout";
 import AuthSection from "@/components/layout/auth/AuthSection";
 import { TypographyH1 } from "@/components/typography";
-import { signUpFormSchema } from "@/lib/formSchema";
+import { emailVerificationSchema } from "@/lib/formSchema";
 import { NextPageWithLayout } from "@/pages/_app";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
-import FormRender from "@/components/FormRender";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { emailVerificationSchema } from "@/lib/formSchema";
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/router";
 import CustomButton from "@/components/CustomButton";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from "@/components/ui/input-otp"
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp";
 import VerifyModal from "@/components/modal/auth/VerifyModal";
-import { Input } from "postcss";
+import { useMutation } from "@tanstack/react-query";
+import { AuthConfirmOtp } from "../../../../hooks/auth";
+import useStorage from "@/lib/useStorage";
+import { QUERY_KEYS } from "@/lib/utils";
+import { ConfirmOtpProps } from "../../../../hooks/auth/types";
 
 const EmailVerification: NextPageWithLayout = () => {
   const [resendDisabled, setResendDisabled] = useState(false);
   const [countdown, setCountdown] = useState(59);
   const [modalOpen, setModalOpen] = useState(false);
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-
   const router = useRouter();
-  const email = "catalina@gmail.com";
+  const email = router.query.email as string;
+  const { getItem } = useStorage();
 
   const form = useForm<z.infer<typeof emailVerificationSchema>>({
     resolver: zodResolver(emailVerificationSchema),
@@ -39,32 +35,79 @@ const EmailVerification: NextPageWithLayout = () => {
     },
   });
 
+  const confirmOtpMutation = useMutation({
+    mutationKey: [QUERY_KEYS.confirmOtp],
+    mutationFn: (data: ConfirmOtpProps) => AuthConfirmOtp(data),
+    onSuccess: () => {
+      setModalOpen(true);
+      // toast({
+      //   title: "Account Successfully Created",
+      //   className: "toast-success",
+      // });
+      // router.push('/dashboard/student/account');
+    },
+    onError: (error) => {
+      console.error("Mutation error:", error);
+      toast({
+        title: "Something went wrong!",
+        description: "Unable to verify OTP. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const onSubmit = (values: z.infer<typeof emailVerificationSchema>) => {
-    setIsLoading(true);
-    setModalOpen(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    const storedFormData = localStorage.getItem('signUpFormData');
+    if (!storedFormData) {
+      toast({
+        title: "Something went wrong!",
+        description: "Unable to retrieve sign-up data.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const signUpData = JSON.parse(storedFormData);
+    const payload = {
+      ...signUpData,
+      otp: values.otp_code,
+    };
+
+    confirmOtpMutation.mutate(payload);
   };
 
-  const handleResendClick = () => {
+  const handleResendClick = async () => {
     if (!resendDisabled) {
       setResendDisabled(true);
-      setCountdown(10);
+      setCountdown(59);
+
+      try {
+        await AuthConfirmOtp({ email, otp_code: ""});
+        toast({
+          title: "OTP Resent",
+          description: `A new OTP has been sent to ${email}`,
+        });
+      } catch (error) {
+        toast({
+          title: "Something went wrong!",
+          description: "Unable to resend OTP. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
-  useEffect(() => {
-    if (countdown > 0 && resendDisabled) {
-      const timer = setInterval(() => {
-        setCountdown(countdown - 1);
-      }, 1000);
+  // useEffect(() => {
+  //   if (countdown > 0 && resendDisabled) {
+  //     const timer = setInterval(() => {
+  //       setCountdown(countdown - 1);
+  //     }, 1000);
 
-      return () => clearInterval(timer);
-    } else if (countdown === 0 && resendDisabled) {
-      setResendDisabled(false);
-    }
-  }, [countdown, resendDisabled]);
+  //     return () => clearInterval(timer);
+  //   } else if (countdown === 0 && resendDisabled) {
+  //     setResendDisabled(false);
+  //   }
+  // }, [countdown, resendDisabled]);
 
   return (
     <AuthSection>
@@ -72,32 +115,32 @@ const EmailVerification: NextPageWithLayout = () => {
       <p className="text-[#6b7280] mb-8">Enter the 6-digit code we sent to <span className="text-[#E89222]">{email}</span></p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-                control={form.control}
-                name="otp_code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                        <InputOTP maxLength={6} {...field}>
-                            <InputOTPGroup className="space-x-4">
-                                <InputOTPSlot index={0} {...form.register("otp_code")} className="bg-[#1E1E1E0D] " />
-                                <InputOTPSlot index={1} {...form.register("otp_code")} className="bg-[#1E1E1E0D] "/>
-                                <InputOTPSlot index={2} {...form.register("otp_code")} className="bg-[#1E1E1E0D] "/>
-                                <InputOTPSeparator />
-                                <InputOTPSlot index={3} {...form.register("otp_code")} className="bg-[#1E1E1E0D] "/>
-                                <InputOTPSlot index={4} {...form.register("otp_code")} className="bg-[#1E1E1E0D] "/>
-                                <InputOTPSlot index={5} {...form.register("otp_code")} className="bg-[#1E1E1E0D] "/>
-                            </InputOTPGroup>
-                        </InputOTP>
-                    </FormControl>
-                  </FormItem>
-                )}
-            />
+          <FormField
+            control={form.control}
+            name="otp_code"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <InputOTP maxLength={6} {...field}>
+                    <InputOTPGroup className="space-x-4">
+                      <InputOTPSlot index={0} {...form.register("otp_code")} className="bg-[#1E1E1E0D]" />
+                      <InputOTPSlot index={1} {...form.register("otp_code")} className="bg-[#1E1E1E0D]" />
+                      <InputOTPSlot index={2} {...form.register("otp_code")} className="bg-[#1E1E1E0D]" />
+                      <InputOTPSeparator />
+                      <InputOTPSlot index={3} {...form.register("otp_code")} className="bg-[#1E1E1E0D]" />
+                      <InputOTPSlot index={4} {...form.register("otp_code")} className="bg-[#1E1E1E0D]" />
+                      <InputOTPSlot index={5} {...form.register("otp_code")} className="bg-[#1E1E1E0D]" />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </FormControl>
+              </FormItem>
+            )}
+          />
           <CustomButton
             type="submit"
-            className=" bg-[#A85334]"
-            disabled={isLoading}
-            isLoading={isLoading}
+            className="bg-[#A85334]"
+            disabled={confirmOtpMutation.isPending}
+            isLoading={confirmOtpMutation.isPending}
           >
             Verify Account
           </CustomButton>
@@ -117,10 +160,10 @@ const EmailVerification: NextPageWithLayout = () => {
       </div>
       {modalOpen && <VerifyModal open={modalOpen} setOpen={setModalOpen} />}
     </AuthSection>
-  )
-}
+  );
+};
 
-export default EmailVerification
+export default EmailVerification;
 
 EmailVerification.getLayout = function getLayout(page: React.ReactElement) {
   return <AuthLayout page={"emailVerification"}>{page}</AuthLayout>;

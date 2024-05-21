@@ -13,14 +13,7 @@ export const signUpFormSchema = z.object({
     .max(28, {
       message: "Password must contain at most 28 character(s)",
     }),
-  confirmPassword: z
-    .string()
-    .min(8, {
-        message: "Password must be at least 8 character(s) long",
-    })
-    .max(28, {
-      message: "Password must contain at most 28 character(s)",
-    }),
+    role: z.string(),
     // token: z.string(),
 });
 
@@ -58,15 +51,15 @@ export const emailVerificationSchema = z.object({
     }),
 });
 
-export const confirmPasswordResetSchema = z.object({
-  email: z.string().email(),
-  otp_code: z
-    .string()
-    .min(6, {
-      message: "Password must not be less than 6 character(s)",
-    })
-    .max(6, { message: "Password must contain at most 6 character(s)" }),
-});
+// export const confirmPasswordResetSchema = z.object({
+//   email: z.string().email(),
+//   otp_code: z
+//     .string()
+//     .min(6, {
+//       message: "Password must not be less than 6 character(s)",
+//     })
+//     .max(6, { message: "Password must contain at most 6 character(s)" }),
+// });
 
 export const resetPasswordSchema = z.object({
   otp: z.string(),

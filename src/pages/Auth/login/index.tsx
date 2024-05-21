@@ -2,7 +2,7 @@ import AuthLayout from "@/components/layout/auth/AuthLayout";
 import AuthSection from "@/components/layout/auth/AuthSection";
 import { TypographyH1 } from "@/components/typography";
 import { signInFormSchema } from "@/lib/formSchema";
-import { NextPageWithLayout } from "@/pages/_app";
+import { NextPageWithLayout, queryClient } from "@/pages/_app";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField } from "@/components/ui/form";
 import FormRender from "@/components/FormRender";
@@ -19,12 +19,14 @@ import { LoginProps } from "../../../../hooks/auth/types";
 import { useMutation } from "@tanstack/react-query";
 import { AuthLogin } from "../../../../hooks/auth";
 import { QUERY_KEYS } from "@/lib/utils";
+import useStorage from "@/lib/useStorage";
+import { useAuth } from "../../../../context/auth.context";
 
 const SignIn: NextPageWithLayout = () => {
   const { toast } = useToast();
-  // const [isLoading, setIsLoading] = useState(false);
-
+  const { setItem } = useStorage();
   const router = useRouter();
+  const { setUpLogin } = useAuth()!;
 
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
@@ -34,11 +36,13 @@ const SignIn: NextPageWithLayout = () => {
     },
   });
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: [QUERY_KEYS.login],
     mutationFn: (data: LoginProps) => AuthLogin(data),
     onSuccess(res) {
       console.log("Mutation success:", res);
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.profile] });
+      setUpLogin(res.data);
       toast({
         title: `Logged in successfully`,
         className: "toast-success",
@@ -109,8 +113,8 @@ const SignIn: NextPageWithLayout = () => {
           <CustomButton
             type="submit"
             className=" bg-[#A85334] w-full"
-            disabled={isLoading}
-            isLoading={isLoading}
+            disabled={isPending}
+            isLoading={isPending}
           >
             Log in
           </CustomButton>

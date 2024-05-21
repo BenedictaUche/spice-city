@@ -15,12 +15,10 @@ import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/router";
 import CustomButton from "@/components/CustomButton";
 import { Input } from "@/components/ui/input";
-import { SignUpProps } from "../../../../hooks/auth/types";
+import { SignUpProps, ConfirmOtpProps } from "../../../../hooks/auth/types";
 import { useMutation } from "@tanstack/react-query";
-import { AuthSignUp } from "../../../../hooks/auth";
+import { AuthSignUp, AuthConfirmOtp } from "../../../../hooks/auth";
 import { QUERY_KEYS } from "@/lib/utils";
-
-
 
 
 const SignUp: NextPageWithLayout = () => {
@@ -40,65 +38,92 @@ const SignUp: NextPageWithLayout = () => {
       firstName: "",
       lastName: "",
       username: "",
+      role: "",
     },
   });
 
-  const { mutate, isLoading} = useMutation({
-    mutationKey: [QUERY_KEYS.signUp],
-    mutationFn: (data: SignUpProps) => AuthSignUp(data),
-    onSuccess(res) {
-      console.log("Mutation success:", res);
-       toast({
-          title: `Account Successfuly Created`,
-          className: "toast-success",
-        });
-      router.push(`/auth/confirm?email=${res.data.email}`);
-    },
-    onError(e: any) {
-      console.log("Mutation error:", e);
-      if (e.response.data.email) {
-        toast({
-          title: `Something went wrong!`,
-          description: "User with this email address already exist",
-          variant: "destructive",
-        });
-        return;
-      }
-      toast({
-        title: `Something went wrong!`,
-        description: e?.response?.data.error || e?.response?.data.password,
-        variant: "destructive",
-      });
-    },
-  });
+  // const { mutate, isPending} = useMutation({
+  //   mutationKey: [QUERY_KEYS.signUp],
+  //   mutationFn: (data: SignUpProps) => AuthSignUp(data),
+  //   onSuccess(res) {
+  //     console.log("Mutation success:", res);
+  //      toast({
+  //         title: `Account Successfuly Created`,
+  //         className: "toast-success",
+  //       });
+  //     router.push(`/auth/confirm?email=${res.data.email}`);
+  //   },
+  //   onError(e: any) {
+  //     console.log("Mutation error:", e);
+  //     if (e.response.data.email) {
+  //       toast({
+  //         title: `Something went wrong!`,
+  //         description: "User with this email address already exist",
+  //         variant: "destructive",
+  //       });
+  //       return;
+  //     }
+  //     toast({
+  //       title: `Something went wrong!`,
+  //       description: e?.response?.data.error || e?.response?.data.password,
+  //       variant: "destructive",
+  //     });
+  //   },
+  // });
+
+  // const {mutate, isPending} = useMutation({
+  //   mutationKey: [QUERY_KEYS.confirmOtp],
+  //   mutationFn: (data: ConfirmOtpProps) => AuthConfirmOtp(data),
+  //   onSuccess(res) {
+  //     console.log("Mutation success:", res);
+  //     toast({
+  //       title: `Account Successfuly Created`,
+  //       className: "toast-success",
+  //     });
+  //     router.push(`/auth/confirm?email=${res.data.email}`);
+  //   },
+  //   onError(e: any) {
+  //     console.log("Mutation error:", e);
+  //     if (e.response.data.email) {
+  //       toast({
+  //         title: `Something went wrong!`,
+  //         description: "User with this email address already exist",
+  //         variant: "destructive",
+  //       });
+  //       return;
+  //     }
+  //     toast({
+  //       title: `Something went wrong!`,
+  //       description: e?.response?.data.error || e?.response?.data.password,
+  //       variant: "destructive",
+  //     });
+  //   },
+  // });
 
 
-  const onSubmit = (values: SignUpProps) => {
-
-    console.log("Form values:", values);
-    // if (values.password !== values.confirmPassword) {
-    //   toast({
-    //     title: `Uhh, something went wrong!`,
-    //     description: "Password and Confirm Password do not match",
-    //     className: "text-[#141619] bg-[#d3d3d4] border-[#bcbebf]",
-    //   });
-    //   console.log("Password and Confirm Password do not match");
-    //   return;
-    // }
-
+  const onSubmit = async (values: z.infer<typeof signUpFormSchema>) => {
     const payload = {
       email: values.email,
       password: values.password,
       firstName: values.firstName,
       lastName: values.lastName,
-      // confirmPassword: values.confirmPassword,
-      role: "student",
+      role: values.role,
       username: values.firstName + values.lastName,
     };
 
-    console.log("Submitting payload: ", payload);
-    mutate(payload);
+    localStorage.setItem('signUpFormData', JSON.stringify(payload));
+
+    try {
+      await AuthConfirmOtp({ email: payload.email, otp_code: "" });
+      router.push(`/auth/confirm?email=${payload.email}`);
+    } catch (error) {
+      toast({
+        title: `Something went wrong!`,
+        description: "Unable to send OTP. Please try again.",
+        variant: "destructive",
+      });
     }
+  };
 
 
   return (
@@ -164,13 +189,13 @@ const SignUp: NextPageWithLayout = () => {
 
           <FormField
             control={form.control}
-            name="confirmPassword"
+            name="role"
             render={({ field }) => (
               <FormRender
-                label="Confirm Password"
-                placeholder="Confirm your password"
+                label="role"
+                placeholder="role"
                 field={field}
-                type="password"
+                type="role"
               />
             )}
           />
@@ -178,9 +203,9 @@ const SignUp: NextPageWithLayout = () => {
 
           <CustomButton
             type="submit"
-            className=" bg-[#A85334]"
-            disabled={isLoading}
-            isLoading={isLoading}
+            className=" bg-[#A85334] w-full hover:bg-[#A85334]/50 "
+            // disabled={isPending}
+            // isLoading={isPending}
           >
             Sign Up
           </CustomButton>

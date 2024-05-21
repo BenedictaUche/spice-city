@@ -5,6 +5,7 @@ export type SignUpProps = {
   password: string;
   // confirmPassword: string;
   username: string;
+  role: string;
 };
 
 
@@ -17,5 +18,4 @@ export type LoginProps = {
 export type ConfirmOtpProps = {
   email: string;
   otp_code: string;
-  new_password: string;
 };

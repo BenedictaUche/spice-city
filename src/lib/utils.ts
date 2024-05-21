@@ -8,6 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export const QUERY_KEYS = {
   signUp: "signup",
   login: "login",
+  profile: "profile",
   confirmOtp: "confirmOtp",
   resendOtp: "resendOtp",
   verifyEmail: "verifyEmail",
@@ -17,3 +18,8 @@ export const QUERY_KEYS = {
   updateProfile: "updateProfile",
   changePassword: "changePassword",
 };
+
+
+export const LOCAL_DATA = {
+  spicityUserMail: "",
+}
