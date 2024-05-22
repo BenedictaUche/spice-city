@@ -3,35 +3,44 @@ import { axiosInstance } from "../../axiosInstance";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/router";
 
-const router = useRouter();
+// const router = useRouter();
 
 
 export const useAddFreeCourses = () => {
     const { toast } = useToast();
 
-    const mutationFn = async (data: any) => {
-        const response = await axiosInstance.post("/courses/addFreeCourse", data);
+    const mutationFn = async (data: FormData) => {
+        const response = await axiosInstance.post("/courses/addFreeCourse", data, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
         return response.data;
-    };
+      };
 
-    return useMutation({
+      return useMutation({
         mutationFn,
         onSuccess: (response: any) => {
-            if(response.status === 200 || response.status === 201){
-                toast({
-                    title: "Course added successfully",
-                    description: `${response.message}`,
-                    className: "toast-success",
-                });
-            } else {
-                toast({
-                  title: "Something went wrong... Try Again",
-                  description: `${response.error}`,
-                  className: "toast-error",
-                });
-              }
-        }
-    });
+          if (response.status_code === 201 || response.status_code === 200) {
+               toast({
+              title: "Courses successfully added",
+              description: `${response.message}`,
+              className: "toast-success",
+            });
+          } else {
+            console.log(response.error)
+            toast({
+              title: "Something went wrong... Try Again",
+
+              description:
+                response.errors && response.errors.length > 0
+                  ? response.errors[0].error
+                  : response.error,
+              className: "toast-error",
+            });
+          }
+        },
+      });
 }
 
 
@@ -67,6 +76,7 @@ export const useUpdateFreeCourses = (accountId: any) => {
 
 export const useDeleteFreeCourses = (accountId: any) => {
     const { toast } = useToast();
+    const router = useRouter();
     const queryClient = useQueryClient();
 
     const mutationFn = async () => {
@@ -99,6 +109,7 @@ export const useDeleteFreeCourses = (accountId: any) => {
 
 export const useDeleteCategory = (categoryId: any) => {
     const { toast } = useToast();
+    const router = useRouter();
     const queryClient = useQueryClient();
 
     const mutationFn = async () => {
@@ -160,6 +171,7 @@ export const useAddShopperCourse = () => {
 
 export const useDeleteShoppperCourse = (accountId: any) => {
     const { toast } = useToast();
+    const router = useRouter();
     const queryClient = useQueryClient();
 
     const mutationFn = async () => {
