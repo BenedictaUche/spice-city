@@ -17,12 +17,17 @@ import Image from "next/image";
 import { data } from "@/components/layout/admin_dashboard/Cards";
 import { BookOpen } from "lucide-react";
 import { requests, transactions, support } from "@/data/data";
+import { useRouter } from "next/router";
 
 const Dashboard: NextPageWithLayout = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showAllTransactions, setShowAllTransactions] = useState(false);
   const [showAllTutorialRequests, setShowAllTutorialRequests] = useState(false);
   const [showAllSupport, setShowAllSupport] = useState(false);
+
+  const router = useRouter();
+  const { accountId } = router.query;
+  console.log(accountId)
 
   const recentTransactions = showAllTransactions
     ? transactions

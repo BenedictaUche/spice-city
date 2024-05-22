@@ -19,6 +19,7 @@ import { SignUpProps, ConfirmOtpProps } from "../../../../hooks/auth/types";
 import { useMutation } from "@tanstack/react-query";
 import { AuthSignUp, AuthConfirmOtp } from "../../../../hooks/auth";
 import { QUERY_KEYS } from "@/lib/utils";
+import { useAuth } from "../../../../context/auth.context";
 
 
 const SignUp: NextPageWithLayout = () => {
@@ -42,63 +43,7 @@ const SignUp: NextPageWithLayout = () => {
     },
   });
 
-  // const { mutate, isPending} = useMutation({
-  //   mutationKey: [QUERY_KEYS.signUp],
-  //   mutationFn: (data: SignUpProps) => AuthSignUp(data),
-  //   onSuccess(res) {
-  //     console.log("Mutation success:", res);
-  //      toast({
-  //         title: `Account Successfuly Created`,
-  //         className: "toast-success",
-  //       });
-  //     router.push(`/auth/confirm?email=${res.data.email}`);
-  //   },
-  //   onError(e: any) {
-  //     console.log("Mutation error:", e);
-  //     if (e.response.data.email) {
-  //       toast({
-  //         title: `Something went wrong!`,
-  //         description: "User with this email address already exist",
-  //         variant: "destructive",
-  //       });
-  //       return;
-  //     }
-  //     toast({
-  //       title: `Something went wrong!`,
-  //       description: e?.response?.data.error || e?.response?.data.password,
-  //       variant: "destructive",
-  //     });
-  //   },
-  // });
 
-  // const {mutate, isPending} = useMutation({
-  //   mutationKey: [QUERY_KEYS.confirmOtp],
-  //   mutationFn: (data: ConfirmOtpProps) => AuthConfirmOtp(data),
-  //   onSuccess(res) {
-  //     console.log("Mutation success:", res);
-  //     toast({
-  //       title: `Account Successfuly Created`,
-  //       className: "toast-success",
-  //     });
-  //     router.push(`/auth/confirm?email=${res.data.email}`);
-  //   },
-  //   onError(e: any) {
-  //     console.log("Mutation error:", e);
-  //     if (e.response.data.email) {
-  //       toast({
-  //         title: `Something went wrong!`,
-  //         description: "User with this email address already exist",
-  //         variant: "destructive",
-  //       });
-  //       return;
-  //     }
-  //     toast({
-  //       title: `Something went wrong!`,
-  //       description: e?.response?.data.error || e?.response?.data.password,
-  //       variant: "destructive",
-  //     });
-  //   },
-  // });
 
 
   const onSubmit = async (values: z.infer<typeof signUpFormSchema>) => {
@@ -114,7 +59,10 @@ const SignUp: NextPageWithLayout = () => {
     localStorage.setItem('signUpFormData', JSON.stringify(payload));
 
     try {
-      await AuthConfirmOtp({ email: payload.email, otp_code: "" });
+      const response = await AuthConfirmOtp({ email: payload.email, otp_code: "" });
+      // const accountId = response.data.accountId;
+      localStorage.setItem('role', payload.role);
+      // localStorage.setItem('accountId', accountId);
       router.push(`/auth/confirm?email=${payload.email}`);
     } catch (error) {
       toast({

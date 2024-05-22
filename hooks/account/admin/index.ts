@@ -3,6 +3,7 @@ import { axiosInstance } from "../../axiosInstance";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/router";
 
+const router = useRouter();
 
 
 export const useAddFreeCourses = () => {
@@ -13,7 +14,8 @@ export const useAddFreeCourses = () => {
         return response.data;
     };
 
-    return useMutation(mutationFn, {
+    return useMutation({
+        mutationFn,
         onSuccess: (response: any) => {
             if(response.status === 200 || response.status === 201){
                 toast({
@@ -42,15 +44,79 @@ export const useUpdateFreeCourses = (accountId: any) => {
         return response.data;
     };
 
-    return useMutation(mutationFn, {
+    return useMutation({
+        mutationFn,
         onSuccess: (response: any) => {
-            queryClient.invalidateQueries(["freeCourses", accountId]);
+            queryClient.invalidateQueries({ queryKey: ["freeCourses", accountId] });
             if(response.status === 200 || response.status === 201){
                 toast({
                     title: "Course updated successfully",
                     description: `${response.message}`,
                     className: "toast-success",
                 });
+            } else {
+                toast({
+                  title: "Something went wrong... Try Again",
+                  description: `${response.error}`,
+                  className: "toast-error",
+                });
+              }
+        }
+    });
+}
+
+export const useDeleteFreeCourses = (accountId: any) => {
+    const { toast } = useToast();
+    const queryClient = useQueryClient();
+
+    const mutationFn = async () => {
+        const response = await axiosInstance.delete(`/courses/deleteFreeCourse/${accountId}`);
+        return response.data;
+    };
+
+    return useMutation({
+        mutationFn,
+        onSuccess: (response: any) => {
+            if(response.status === 200 || response.status === 201 || response.status_code === 204){
+                toast({
+                    title: "Course deleted successfully",
+                    description: `${response.message}`,
+                    className: "toast-success",
+                });
+                router.push("/dashboard/admin/courses");
+
+            } else {
+                toast({
+                  title: "Something went wrong... Try Again",
+                  description: `${response.error}`,
+                  className: "toast-error",
+                });
+              }
+        }
+    });
+}
+
+
+export const useDeleteCategory = (categoryId: any) => {
+    const { toast } = useToast();
+    const queryClient = useQueryClient();
+
+    const mutationFn = async () => {
+        const response = await axiosInstance.delete(`/courses/deleteCategory/${categoryId}`);
+        return response.data;
+    };
+
+    return useMutation({
+        mutationFn,
+        onSuccess: (response: any) => {
+            if(response.status === 200 || response.status === 201 || response.status_code === 204){
+                toast({
+                    title: "Category deleted successfully",
+                    description: `${response.message}`,
+                    className: "toast-success",
+                });
+                router.push("/dashboard/admin/courses");
+
             } else {
                 toast({
                   title: "Something went wrong... Try Again",
@@ -71,7 +137,8 @@ export const useAddShopperCourse = () => {
         return response.data;
     };
 
-    return useMutation(mutationFn, {
+    return useMutation({
+        mutationFn,
         onSuccess: (response: any) => {
             if(response.status === 200 || response.status === 201){
                 toast({
@@ -79,6 +146,38 @@ export const useAddShopperCourse = () => {
                     description: `${response.message}`,
                     className: "toast-success",
                 });
+            } else {
+                toast({
+                  title: "Something went wrong... Try Again",
+                  description: `${response.error}`,
+                  className: "toast-error",
+                });
+              }
+        }
+    });
+}
+
+
+export const useDeleteShoppperCourse = (accountId: any) => {
+    const { toast } = useToast();
+    const queryClient = useQueryClient();
+
+    const mutationFn = async () => {
+        const response = await axiosInstance.delete(`/courses/deleteShopperCourse/${accountId}`);
+        return response.data;
+    };
+
+    return useMutation({
+        mutationFn,
+        onSuccess: (response: any) => {
+            if(response.status === 200 || response.status === 201 || response.status_code === 204){
+                toast({
+                    title: "Course deleted successfully",
+                    description: `${response.message}`,
+                    className: "toast-success",
+                });
+                router.push("/dashboard/admin/courses");
+
             } else {
                 toast({
                   title: "Something went wrong... Try Again",

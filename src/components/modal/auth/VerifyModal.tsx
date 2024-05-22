@@ -12,11 +12,20 @@ type ModalProps = {
 
 const VerifyModal = ({open, setOpen}: ModalProps) => {
     const router = useRouter();
+    const role = localStorage.getItem('role');
+    // const accountId = localStorage.getItem('accountId');
+
 
     const handleOkay = () => {
         setOpen(false);
-        router.push('/auth/login');
-    }
+        if (role === 'admin') {
+          router.push(`/auth/login`);
+        } else {
+          router.push('/auth/login');
+        }
+      }
+
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="p-14 sm:rounded-[8px]">

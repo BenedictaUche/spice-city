@@ -40,11 +40,6 @@ const EmailVerification: NextPageWithLayout = () => {
     mutationFn: (data: ConfirmOtpProps) => AuthConfirmOtp(data),
     onSuccess: () => {
       setModalOpen(true);
-      // toast({
-      //   title: "Account Successfully Created",
-      //   className: "toast-success",
-      // });
-      // router.push('/dashboard/student/account');
     },
     onError: (error) => {
       console.error("Mutation error:", error);
@@ -58,6 +53,9 @@ const EmailVerification: NextPageWithLayout = () => {
 
   const onSubmit = (values: z.infer<typeof emailVerificationSchema>) => {
     const storedFormData = localStorage.getItem('signUpFormData');
+    const role = localStorage.getItem('role');
+    const accountId = localStorage.getItem('accountId');
+
     if (!storedFormData) {
       toast({
         title: "Something went wrong!",
@@ -73,7 +71,19 @@ const EmailVerification: NextPageWithLayout = () => {
       otp: values.otp_code,
     };
 
-    confirmOtpMutation.mutate(payload);
+    confirmOtpMutation.mutate(payload, {
+      onSuccess: () => {
+        setModalOpen(true);
+      },
+      onError: (error) => {
+        console.error("Mutation error:", error);
+        toast({
+          title: "Something went wrong!",
+          description: "Unable to verify OTP. Please try again.",
+          variant: "destructive",
+        });
+      }
+    });
   };
 
   const handleResendClick = async () => {

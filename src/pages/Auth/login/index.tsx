@@ -24,7 +24,7 @@ import { useAuth } from "../../../../context/auth.context";
 
 const SignIn: NextPageWithLayout = () => {
   const { toast } = useToast();
-  const { setItem } = useStorage();
+  const { getItem } = useStorage();
   const router = useRouter();
   const { setUpLogin } = useAuth()!;
 
@@ -47,7 +47,13 @@ const SignIn: NextPageWithLayout = () => {
         title: `Logged in successfully`,
         className: "toast-success",
       });
-      router.push("/dashboard/student/account");
+      const userRole = localStorage.getItem('role');
+      console.log(userRole)
+      if (userRole === "admin") {
+        router.push(`/dashboard/admin/account`);
+      } else {
+        router.push(`/dashboard/student/account`);
+      }
     },
     onError(e: any) {
       console.log("Mutation error:", e);
