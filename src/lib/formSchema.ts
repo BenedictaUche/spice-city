@@ -18,7 +18,7 @@ export const signUpFormSchema = z.object({
 });
 
 export const signInFormSchema = z.object({
-  email: z.string().email(),
+  username: z.string(),
   password: z
     .string()
     .min(8, {

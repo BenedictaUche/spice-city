@@ -53,8 +53,8 @@ const EmailVerification: NextPageWithLayout = () => {
 
   const onSubmit = (values: z.infer<typeof emailVerificationSchema>) => {
     const storedFormData = localStorage.getItem('signUpFormData');
-    const role = localStorage.getItem('role');
-    const accountId = localStorage.getItem('accountId');
+    // const role = localStorage.getItem('role');
+    // const accountId = localStorage.getItem('accountId');
 
     if (!storedFormData) {
       toast({
@@ -74,6 +74,7 @@ const EmailVerification: NextPageWithLayout = () => {
     confirmOtpMutation.mutate(payload, {
       onSuccess: () => {
         setModalOpen(true);
+        router.push(`/dashboard/${localStorage.getItem('role')}/account`);
       },
       onError: (error) => {
         console.error("Mutation error:", error);

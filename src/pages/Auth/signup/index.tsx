@@ -53,7 +53,7 @@ const SignUp: NextPageWithLayout = () => {
       firstName: values.firstName,
       lastName: values.lastName,
       role: values.role,
-      username: values.firstName + values.lastName,
+      username: values.username,
     };
 
     localStorage.setItem('signUpFormData', JSON.stringify(payload));
@@ -66,8 +66,8 @@ const SignUp: NextPageWithLayout = () => {
       router.push(`/auth/confirm?email=${payload.email}`);
     } catch (error) {
       toast({
-        title: `Something went wrong!`,
-        description: "Unable to send OTP. Please try again.",
+        title: `User already exists`,
+        description: "Please try again.",
         variant: "destructive",
       });
     }
@@ -117,6 +117,18 @@ const SignUp: NextPageWithLayout = () => {
               <FormRender
                 label="Email"
                 placeholder="Enter your email"
+                field={field}
+              />
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormRender
+                label="Username"
+                placeholder="Enter your username"
                 field={field}
               />
             )}

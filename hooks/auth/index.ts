@@ -20,6 +20,7 @@ export const AuthSignUp = async (payload: SignUpProps) => {
   return await axios(config);
 
 };
+
 export const AuthLogin = async ({ ...rest }: LoginProps) => {
   const config: AxiosRequestConfig = {
     method: "post",

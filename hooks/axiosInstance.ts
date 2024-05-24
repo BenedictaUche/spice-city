@@ -1,11 +1,14 @@
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 
+const apiKey = process.env.NEXT_PUBLIC_API_KEY || localStorage.getItem("api-key");
+
 export const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
+    "X-Api-Key": apiKey,
   },
   withCredentials: false,
 });
@@ -24,6 +27,9 @@ axiosInstance.interceptors.request.use(
     if (AccessToken) {
       config.headers!["Authorization"] = "Bearer " + AccessToken;
     }
+    if (apiKey) {
+      config.headers["X-Api-Key"] = apiKey;
+    }
     return config;
   },
   (error) => {
@@ -36,6 +42,8 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
+    console.error("Error response:", error.response);
+
     if (error.response?.status === 401) {
       const { toast } = useToast();
       toast({
@@ -44,6 +52,16 @@ axiosInstance.interceptors.response.use(
       });
       logout();
     }
+
+
+    if (error.response && error.response.data) {
+      try {
+        JSON.parse(error.response.data);
+      } catch (e) {
+        console.error("Response data is not valid JSON:", error.response.data);
+      }
+    }
+
     return Promise.reject(error);
   },
 );

@@ -31,7 +31,7 @@ const SignIn: NextPageWithLayout = () => {
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
@@ -42,7 +42,8 @@ const SignIn: NextPageWithLayout = () => {
     onSuccess(res) {
       console.log("Mutation success:", res);
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.profile] });
-      setUpLogin(res.data);
+      const apiKey = res.data.apiKey;
+      setUpLogin(apiKey);
       toast({
         title: `Logged in successfully`,
         className: "toast-success",
@@ -66,7 +67,7 @@ const SignIn: NextPageWithLayout = () => {
       }
       toast({
         title: `Something went wrong!`,
-        description: e?.response?.data.error || e?.response?.data.password,
+        description: e.response.data.message || "Unable to login",
         variant: "destructive",
       });
     },
@@ -92,11 +93,11 @@ const SignIn: NextPageWithLayout = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
-            name="email"
+            name="username"
             render={({ field }) => (
               <FormRender
 
-                placeholder="Enter email address / username"
+                placeholder="Enter username"
                 field={field}
               />
             )}

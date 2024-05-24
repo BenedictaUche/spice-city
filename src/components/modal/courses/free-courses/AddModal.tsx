@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Image, Mic } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddFreeCourses } from "../../../../../hooks/account/admin";
+import { useToast } from "@/components/ui/use-toast";
 
 type FreeCoursesModalProps = {
   className?: string;
@@ -38,6 +39,7 @@ const AddModal = ({
   const [selectedAudio, setSelectedAudio] = useState<File | null>(null);
 
   const { mutate, isPending } = useAddFreeCourses();
+  const { toast } = useToast();
 
   const onSubmitStep1 = async (data: any) => {
     setStep(2);
@@ -98,6 +100,11 @@ const AddModal = ({
       },
       onError: (error) => {
         console.error("Error submitting form: ", error);
+        toast({
+          title: "Error",
+          description: "An error occurred, please try again",
+          variant: "destructive",
+        });
         setIsLoading(false);
       },
     });
