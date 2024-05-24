@@ -17,8 +17,8 @@ export default function Headers() {
             </Link>
             <NavigationMenus  />
             <div className="bg-none z-99 font-[400] text-[14px] text-white gap-8 flex items-center ">
-            <Link href='/auth/login'>Login</Link>
-            <Button className="bg-brown h-[35px] w-[auto] rounded-2xl p-[15px] text-[14px] items-center justify-center"><Link href="/auth/signup">Join Now</Link></Button>
+            <Link href='/Auth/login'>Login</Link>
+            <Button className="bg-brown h-[35px] w-[auto] rounded-2xl p-[15px] text-[14px] items-center justify-center"><Link href="/Auth/signup">Join Now</Link></Button>
             </div>
         </div>
     )
