@@ -23,7 +23,7 @@ export const AuthSignUp = async (payload: SignUpProps) => {
 
 export const AuthLogin = async ({ ...rest }: LoginProps) => {
   const config: AxiosRequestConfig = {
-    method: "post",
+    method: "POST",
     url: `${process.env.NEXT_PUBLIC_API_URL}/login`,
     data: rest,
   };
