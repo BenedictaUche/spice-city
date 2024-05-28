@@ -62,9 +62,6 @@ export function NavigationMenus() {
             <div className="flex justify-center items-center gap-3">
             <Link href="#explore">Explore</Link> <IoCaretDownSharp size={10} />
             </div>
-            <div className="flex justify-center items-center gap-3">
-            <Link href="">Community</Link> <IoCaretDownSharp size={10} />
-            </div>
             <Link href="#about">About</Link>
         </div>
     )

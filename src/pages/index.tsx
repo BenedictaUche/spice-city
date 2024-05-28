@@ -51,9 +51,9 @@ export default function Home() {
             <span className="text-brown">Learn</span> Guitar With <br />
             Spicy Guitar Academy
           </h1>
-          <Button className="bg-brown h-[35px] w-[auto] rounded-2xl p-[15px] text-[14px] items-center justify-center">
+          <Link href="/auth/signup" className="bg-brown  w-[auto] rounded-2xl py-2 px-[15px] text-[14px] items-center justify-center">
             Your Guitar Journey Starts Here!
-          </Button>
+          </Link>
         </div>
       </div>
       <section
@@ -138,9 +138,10 @@ export default function Home() {
               <p className="text-[#D1831F] text-[14px] font-semibold ">
                 - Guitarism, Igniting Creativity.
               </p>
-              <Button className="bg-brown h-[35px] w-[auto] rounded-2xl p-[15px] text-[16px] items-center justify-center">
+              <Link href="/auth/signup" className="bg-brown  w-[auto] rounded-2xl py-2 px-[15px] text-[14px] text-center items-center justify-center">
                 Create Account
-              </Button>
+              </Link>
+              
             </div>
             <div className="hidden lg:flex flex-col justify-between gap-5 relative lg:top-[-300px]">
               <Image
