@@ -3,21 +3,42 @@ import Image from "next/image";
 import { Inter } from "next/font/google";
 import { Button } from "@/components/ui/button";
 import { NavigationMenus } from "@/components/parts/Menus";
-import Headers from "@/components/parts/Headers";
+import HeaderMenu from "@/components/parts/HeaderMenu";
 import { SPGCarousel } from "@/components/parts/Carousel";
 import { FaYoutube } from "react-icons/fa";
 import Footer from "@/components/parts/Footer";
 import { TabsDisplay } from "@/components/parts/Tabs";
+import { useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
+type DashboardPages =
+  |'dashboard'
+  |'courses'
+  |'subscription-plans'
+  |'transactions'
+  |'tutors'
+  |'students'
+  |'assignments'
+  |'chat-forum'
+  |'support';
+
+  type DashboardLayoutProps = React.PropsWithChildren & {
+    page: DashboardPages;
+    children?: React.ReactNode;
+  };
+
 export default function Home() {
+  const [toggleSideBar, setToggleSideBar] = useState(false);
+
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between  ${inter.className}`}
     >
       <div className="w-full absolute ">
-      <Headers />
+      <HeaderMenu page={[Home ]}
+          toggleSideBar={toggleSideBar}
+          setToggleSideBar={setToggleSideBar} />
       </div>
       <div
         className=" w-full h-[80vh] mb-10 bg-center bg-cover bg-no-repeat "
