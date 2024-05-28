@@ -35,17 +35,17 @@ export function SPGCarousel() {
   }, [api])
 
   return (
-    <div className="w-full max-w-xs">
+    <div className="flex  flex-col px-4 justify-center lg:w-full max-w-xs">
       <Carousel setApi={setApi}>
-        <CarouselContent>
+        <CarouselContent >
           {imageUrls.map((imageUrl, index) => (
             <CarouselItem  key={index}>
-              <Card className="border-none  w-[300px] h-[200px]">
+              <Card className="border-none  w-[90%] h-[200px]">
                 <CardContent className="flex items-center justify-center p-6">
                 <Image
                     src={imageUrl}
                     alt={`Image ${index + 1}`}
-                    width={300} // Set your desired width
+                    width={400} // Set your desired width
                     height={300} // Set your desired height
                     className="object-cover"
                   />
@@ -57,7 +57,7 @@ export function SPGCarousel() {
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
-      <div className="py-2 text-center text-sm text-muted-foreground">
+      <div className="py-2 text-center justify-center align-middle items-center text-sm text-muted-foreground">
         Slide {current} of {count}
       </div>
     </div>

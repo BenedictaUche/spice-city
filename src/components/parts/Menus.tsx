@@ -56,17 +56,16 @@ const components: { title: string; href: string; description: string }[] = [
 export function NavigationMenus() {
     return (
         <div className="bg-none z-99 font-[400] text-[14px] text-white gap-5 flex ">
-
             <div className="flex justify-center items-center gap-3">
-            <Link href=''>Courses</Link> <IoCaretDownSharp size={10} />
+            <Link href='#mission'>Mission</Link> <IoCaretDownSharp size={10} />
             </div>
             <div className="flex justify-center items-center gap-3">
-            <Link href="">Explore</Link> <IoCaretDownSharp size={10} />
+            <Link href="#explore">Explore</Link> <IoCaretDownSharp size={10} />
             </div>
             <div className="flex justify-center items-center gap-3">
             <Link href="">Community</Link> <IoCaretDownSharp size={10} />
             </div>
-            <Link href="">About</Link>
+            <Link href="#about">About</Link>
         </div>
     )
 }
