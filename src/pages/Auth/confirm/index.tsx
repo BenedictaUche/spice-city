@@ -14,10 +14,10 @@ import CustomButton from "@/components/CustomButton";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp";
 import VerifyModal from "@/components/modal/auth/VerifyModal";
 import { useMutation } from "@tanstack/react-query";
-import { AuthConfirmOtp } from "../../../../hooks/auth";
+import { AuthConfirmOtp, AuthSignUp } from "../../../../hooks/auth";
 import useStorage from "@/lib/useStorage";
 import { QUERY_KEYS } from "@/lib/utils";
-import { ConfirmOtpProps } from "../../../../hooks/auth/types";
+import { ConfirmOtpProps, SignUpProps } from "../../../../hooks/auth/types";
 
 const EmailVerification: NextPageWithLayout = () => {
   const [resendDisabled, setResendDisabled] = useState(false);
@@ -35,9 +35,9 @@ const EmailVerification: NextPageWithLayout = () => {
     },
   });
 
-  const confirmOtpMutation = useMutation({
-    mutationKey: [QUERY_KEYS.confirmOtp],
-    mutationFn: (data: ConfirmOtpProps) => AuthConfirmOtp(data),
+  const {mutate, isPending} = useMutation({
+    mutationKey: [QUERY_KEYS.signUp],
+    mutationFn: (data: SignUpProps) => AuthSignUp(data),
     onSuccess: () => {
       setModalOpen(true);
     },
@@ -53,7 +53,8 @@ const EmailVerification: NextPageWithLayout = () => {
 
   const onSubmit = (values: z.infer<typeof emailVerificationSchema>) => {
     const storedFormData = localStorage.getItem('signUpFormData');
-    // const role = localStorage.getItem('role');
+    console.log(storedFormData);
+    localStorage.getItem('role');
     // const accountId = localStorage.getItem('accountId');
 
     if (!storedFormData) {
@@ -71,20 +72,23 @@ const EmailVerification: NextPageWithLayout = () => {
       otp: values.otp_code,
     };
 
-    confirmOtpMutation.mutate(payload, {
-      onSuccess: () => {
-        setModalOpen(true);
-        router.push(`/dashboard/${localStorage.getItem('role')}/account`);
-      },
-      onError: (error) => {
-        console.error("Mutation error:", error);
-        toast({
-          title: "Something went wrong!",
-          description: "Unable to verify OTP. Please try again.",
-          variant: "destructive",
-        });
-      }
-    });
+    console.log(payload)
+    mutate(payload);
+
+    // confirmOtpMutation.mutate(payload, {
+    //   onSuccess: () => {
+    //     setModalOpen(true);
+    //     router.push(`/dashboard/${localStorage.getItem('role')}/account`);
+    //   },
+    //   onError: (error) => {
+    //     console.error("Mutation error:", error);
+    //     toast({
+    //       title: "Something went wrong!",
+    //       description: "Unable to verify OTP. Please try again.",
+    //       variant: "destructive",
+    //     });
+    //   }
+    // });
   };
 
   const handleResendClick = async () => {
@@ -150,8 +154,8 @@ const EmailVerification: NextPageWithLayout = () => {
           <CustomButton
             type="submit"
             className="bg-[#A85334]"
-            disabled={confirmOtpMutation.isPending}
-            isLoading={confirmOtpMutation.isPending}
+            disabled={isPending}
+            isLoading={isPending}
           >
             Verify Account
           </CustomButton>

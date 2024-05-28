@@ -27,8 +27,6 @@ const SignUp: NextPageWithLayout = () => {
   // const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
-  // const { token } = router.query;
-  // console.log(token);
 
   const form = useForm<z.infer<typeof signUpFormSchema>>({
     resolver: zodResolver(signUpFormSchema),
@@ -56,14 +54,13 @@ const SignUp: NextPageWithLayout = () => {
       username: values.username,
     };
 
-    localStorage.setItem('signUpFormData', JSON.stringify(payload));
+
 
     try {
-      const response = await AuthConfirmOtp({ email: payload.email, otp_code: "" });
-      // const accountId = response.data.accountId;
+      await AuthConfirmOtp({ email: payload.email, otp_code: "" });
+      localStorage.setItem('signUpFormData', JSON.stringify(payload));
       localStorage.setItem('role', payload.role);
-      // localStorage.setItem('accountId', accountId);
-      router.push(`/Auth/confirm?email=${payload.email}`);
+      router.push(`/auth/confirm?email=${payload.email}`);
     } catch (error) {
       toast({
         title: `User already exists`,
@@ -79,7 +76,7 @@ const SignUp: NextPageWithLayout = () => {
       <TypographyH1 className="mb-4">Hi, create an account to get started</TypographyH1>
       <p className="">
             Already have an account?{" "}
-            <Link href="/Auth/login" className="text-[#A85334]">
+            <Link href="/auth/login" className="text-[#A85334]">
               Log in
             </Link>
           </p>

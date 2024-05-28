@@ -26,12 +26,12 @@ const SignIn: NextPageWithLayout = () => {
   const { toast } = useToast();
   const { getItem } = useStorage();
   const router = useRouter();
-  const { setUpLogin } = useAuth()!;
+  // const { setUpLogin } = useAuth()!;
 
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -42,8 +42,8 @@ const SignIn: NextPageWithLayout = () => {
     onSuccess(res) {
       console.log("Mutation success:", res);
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.profile] });
-      const apiKey = res.data.apiKey;
-      setUpLogin(apiKey);
+      // const apiKey = res.data.api;
+      // setUpLogin(apiKey);
       toast({
         title: `Logged in successfully`,
         className: "toast-success",
@@ -93,11 +93,11 @@ const SignIn: NextPageWithLayout = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
-            name="username"
+            name="email"
             render={({ field }) => (
               <FormRender
 
-                placeholder="Enter username"
+                placeholder="Enter email"
                 field={field}
               />
             )}

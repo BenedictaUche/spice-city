@@ -18,15 +18,15 @@ export const signUpFormSchema = z.object({
 });
 
 export const signInFormSchema = z.object({
-  username: z.string(),
+  email: z.string(),
   password: z
     .string()
-    .min(8, {
-      message: "Password must contain at least 8 character(s)",
-    })
-    .max(28, {
-      message: "Password must contain at most 28 character(s)",
-    }),
+    // .min(8, {
+    //   message: "Password must contain at least 8 character(s)",
+    // })
+    // .max(28, {
+    //   message: "Password must contain at most 28 character(s)",
+    // }),
 });
 
 export const contactFormSchema = z.object({

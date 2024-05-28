@@ -10,7 +10,7 @@ export type SignUpProps = {
 
 
 export type LoginProps = {
-  username: string;
+  email: string;
   password: string;
 };
 
