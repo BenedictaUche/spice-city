@@ -41,35 +41,28 @@ const SignIn: NextPageWithLayout = () => {
     mutationFn: (data: LoginProps) => AuthLogin(data),
     onSuccess(res) {
       console.log("Mutation success:", res);
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.profile] });
-      // const apiKey = res.data.api;
-      // setUpLogin(apiKey);
-      toast({
-        title: `Logged in successfully`,
-        className: "toast-success",
-      });
-      const userRole = localStorage.getItem('role');
-      console.log(userRole)
-      if (userRole === "admin") {
-        router.push(`/dashboard/admin/account`);
-      } else {
-        router.push(`/dashboard/student/account`);
-      }
-    },
-    onError(e: any) {
-      console.log("Mutation error:", e);
-      if (e.response.data.email) {
+      if(res.status === 200) {
         toast({
-          title: e.response.data.email,
+          title: `Logged in successfully`,
+          className: "toast-success",
+        });
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.profile] });
+        const userRole = localStorage.getItem('role');
+        console.log(userRole)
+        if (res.data.role === "admin") {
+          router.push(`/dashboard/admin/account`);
+        } else {
+          router.push(`/dashboard/student/account`);
+        }
+      } else {
+        toast({
+          title: `Something went wrong!`,
+          description: res.data.message || "Unable to login",
           className: "toast-error",
         });
-        return;
       }
-      toast({
-        title: `Something went wrong!`,
-        description: e.response.data.message || "Unable to login",
-        variant: "destructive",
-      });
+
+
     },
   });
 

@@ -23,13 +23,23 @@ export const AuthSignUp = async (payload: SignUpProps) => {
 
 export const AuthLogin = async ({ ...rest }: LoginProps) => {
   const config: AxiosRequestConfig = {
-    method: "POST",
+    method: "post",
     url: `${process.env.NEXT_PUBLIC_API_URL}/login`,
     data: rest,
   };
 
-  return await axios(config);
+  try {
+    const response = await axios(config);
+    console.log('Backend response:', response.data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      console.log('Error response from backend:', error.response.data);
+    }
+    throw error;
+  }
 };
+
 
 export const AuthConfirmOtp = async (payload: {
   email: string;

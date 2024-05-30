@@ -60,7 +60,7 @@ const SignUp: NextPageWithLayout = () => {
       await AuthConfirmOtp({ email: payload.email, otp_code: "" });
       localStorage.setItem('signUpFormData', JSON.stringify(payload));
       localStorage.setItem('role', payload.role);
-      router.push(`/Auth/confirm?email=${payload.email}`);
+      router.push(`/auth/confirm?email=${payload.email}`);
     } catch (error) {
       toast({
         title: `User already exists`,
