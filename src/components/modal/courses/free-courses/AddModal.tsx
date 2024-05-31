@@ -338,7 +338,7 @@ const AddModal = ({
                   >
                     Previous
                   </CustomButton>
-                  <CustomButton className="bg-[#A85334] w-full" type="submit">
+                  <CustomButton className="bg-[#A85334] w-full" type="submit" disabled={isPending} isLoading={isPending}>
                     Save
                   </CustomButton>
                 </div>
